@@ -1,0 +1,101 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net471</TargetFramework>
+    <AssemblyName>BakuonConfigMod</AssemblyName>
+    <LangVersion>7.3</LangVersion>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+
+    <!-- ゲームパス（csprojの親ディレクトリ = ゲームフォルダ） -->
+    <GamePath Condition="'$(GamePath)' == ''">$(MSBuildProjectDirectory)\..</GamePath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- BepInEx参照 -->
+    <Reference Include="BepInEx">
+      <HintPath>$(GamePath)\BepInEx\core\BepInEx.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+
+    <!-- HarmonyX参照 -->
+    <Reference Include="0Harmony">
+      <HintPath>$(GamePath)\BepInEx\core\0Harmony.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+
+    <!-- Unity参照 -->
+    <Reference Include="UnityEngine">
+      <HintPath>$(GamePath)\bakuon2_Data\Managed\UnityEngine.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+
+    <Reference Include="UnityEngine.CoreModule">
+      <HintPath>$(GamePath)\bakuon2_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+
+    <!-- ゲーム本体のDLL -->
+    <Reference Include="Assembly-CSharp">
+      <HintPath>$(GamePath)\bakuon2_Data\Managed\Assembly-CSharp.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+
+    <Reference Include="Assembly-CSharp-firstpass">
+      <HintPath>$(GamePath)\bakuon2_Data\Managed\Assembly-CSharp-firstpass.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+
+    <!-- UnityEngine.UI -->
+    <Reference Include="UnityEngine.UI">
+      <HintPath>$(GamePath)\bakuon2_Data\Managed\UnityEngine.UI.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+
+    <!-- TextMeshPro -->
+    <Reference Include="Unity.TextMeshPro">
+      <HintPath>$(GamePath)\bakuon2_Data\Managed\Unity.TextMeshPro.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+
+    <!-- Input -->
+    <Reference Include="UnityEngine.InputLegacyModule">
+      <HintPath>$(GamePath)\bakuon2_Data\Managed\UnityEngine.InputLegacyModule.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+
+    <!-- IMGUI -->
+    <Reference Include="UnityEngine.IMGUIModule">
+      <HintPath>$(GamePath)\bakuon2_Data\Managed\UnityEngine.IMGUIModule.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+
+    <!-- UIModule -->
+    <Reference Include="UnityEngine.UIModule">
+      <HintPath>$(GamePath)\bakuon2_Data\Managed\UnityEngine.UIModule.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+
+    <!-- Audio -->
+    <Reference Include="UnityEngine.AudioModule">
+      <HintPath>$(GamePath)\bakuon2_Data\Managed\UnityEngine.AudioModule.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+
+    <!-- Screenshot -->
+    <Reference Include="UnityEngine.ScreenCaptureModule">
+      <HintPath>$(GamePath)\bakuon2_Data\Managed\UnityEngine.ScreenCaptureModule.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+
+    <!-- PNG encode (EncodeToPNG extension method) -->
+    <Reference Include="UnityEngine.ImageConversionModule">
+      <HintPath>$(GamePath)\bakuon2_Data\Managed\UnityEngine.ImageConversionModule.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+  </ItemGroup>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="xcopy /y &quot;$(TargetPath)&quot; &quot;$(GamePath)\BepInEx\plugins\&quot;" />
+  </Target>
+
+</Project>
