@@ -12,17 +12,24 @@ namespace BakuonConfigMod
         private UIVisibilityWindow visibilityWindow;
         private RingWindow ringWindow;
         private ItemWindow itemWindow;
+        private AccessoryWindow accessoryWindow;
 
         private bool isVisible = false;
         private string rebindingAction = null;  // null = リバインド待ちなし
 
         // 仮想座標 (1080p 基準) でのウィンドウ位置・サイズ
-        private Rect windowRect = new Rect(100, 100, 500, 360);
+        private Rect windowRect = new Rect(100, 100, 500, 320);
         private Vector2 scrollPos = Vector2.zero;
 
-        // タブ: 0=キーコンフィグ, 1=設定, 2=UI表示設定, 3=リング, 4=アイテム
+        // タブ: 0=キーコンフィグ, 1=設定, 2=UI表示設定, 3=リング, 4=アイテム, 5=アクセサリ
         private int activeTab = 0;
-        private static readonly string[] TabLabels = { "キーコンフィグ", "設定", "UI表示設定", "リング", "アイテム" };
+        private static readonly string[] TabLabels = { "キーコンフィグ", "設定", "UI表示設定", "リング", "アイテム", "アクセサリ" };
+
+        // タブごとのウィンドウ高さ (1080p 基準)
+        // index: 0=キーコンフィグ, 1=設定, 2=UI表示設定, 3=リング, 4=アイテム, 5=アクセサリ
+        private static readonly float[] TabWindowHeights = { 320f, 260f, 260f, 210f, 370f, 600f };
+        // スクロール領域が必要なタブ用の高さ (ウィンドウ高さ - 固定オーバーヘッド分)
+        private static readonly int[] TabScrollHeights  = {  180,    0,    0,    0,  220,  440 };
 
         private void Start()
         {
@@ -30,6 +37,7 @@ namespace BakuonConfigMod
             visibilityWindow = GetComponent<UIVisibilityWindow>();
             ringWindow       = GetComponent<RingWindow>();
             itemWindow       = GetComponent<ItemWindow>();
+            accessoryWindow  = GetComponent<AccessoryWindow>();
         }
 
         public void Initialize(ConfigFile config)
@@ -94,6 +102,7 @@ namespace BakuonConfigMod
             {
                 activeTab = newTab;
                 scrollPos = Vector2.zero;
+                windowRect.height = TabWindowHeights[activeTab];
             }
 
             GUILayout.Space(4);
@@ -111,7 +120,10 @@ namespace BakuonConfigMod
                     if (ringWindow != null) ringWindow.DrawTabContent();
                     break;
                 case 4:
-                    if (itemWindow != null) itemWindow.DrawTabContent();
+                    if (itemWindow != null) itemWindow.DrawTabContent(TabScrollHeights[4]);
+                    break;
+                case 5:
+                    if (accessoryWindow != null) accessoryWindow.DrawTabContent(TabScrollHeights[5]);
                     break;
             }
 

@@ -49,7 +49,7 @@ namespace BakuonConfigMod
             }
         }
 
-        public void DrawTabContent()
+        public void DrawTabContent(int scrollHeight)
         {
             GUILayout.Space(4);
 
@@ -60,7 +60,7 @@ namespace BakuonConfigMod
                 return;
             }
 
-            scrollPos = GUILayout.BeginScrollView(scrollPos, GUILayout.Height(220));
+            scrollPos = GUILayout.BeginScrollView(scrollPos, GUILayout.Height(scrollHeight));
 
             foreach (ItemData item in gm.stockItemDataList)
             {
