@@ -11,23 +11,25 @@ namespace BakuonConfigMod
         private SettingsWindow settingsWindow;
         private UIVisibilityWindow visibilityWindow;
         private RingWindow ringWindow;
+        private ItemWindow itemWindow;
 
         private bool isVisible = false;
         private string rebindingAction = null;  // null = リバインド待ちなし
 
         // 仮想座標 (1080p 基準) でのウィンドウ位置・サイズ
-        private Rect windowRect = new Rect(100, 100, 460, 320);
+        private Rect windowRect = new Rect(100, 100, 500, 360);
         private Vector2 scrollPos = Vector2.zero;
 
-        // タブ: 0=キーコンフィグ, 1=設定, 2=UI表示設定, 3=リング
+        // タブ: 0=キーコンフィグ, 1=設定, 2=UI表示設定, 3=リング, 4=アイテム
         private int activeTab = 0;
-        private static readonly string[] TabLabels = { "キーコンフィグ", "設定", "UI表示設定", "リング" };
+        private static readonly string[] TabLabels = { "キーコンフィグ", "設定", "UI表示設定", "リング", "アイテム" };
 
         private void Start()
         {
             settingsWindow   = GetComponent<SettingsWindow>();
             visibilityWindow = GetComponent<UIVisibilityWindow>();
             ringWindow       = GetComponent<RingWindow>();
+            itemWindow       = GetComponent<ItemWindow>();
         }
 
         public void Initialize(ConfigFile config)
@@ -107,6 +109,9 @@ namespace BakuonConfigMod
                     break;
                 case 3:
                     if (ringWindow != null) ringWindow.DrawTabContent();
+                    break;
+                case 4:
+                    if (itemWindow != null) itemWindow.DrawTabContent();
                     break;
             }
 
