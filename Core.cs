@@ -33,6 +33,7 @@ namespace BakuonConfigMod
             settings.Initialize(Config);
             var vis = go.AddComponent<UIVisibilityWindow>();
             vis.Initialize(Config);
+            go.AddComponent<RingWindow>();
             var window = go.AddComponent<ConfigModWindow>();
             window.Initialize(Config);
 
