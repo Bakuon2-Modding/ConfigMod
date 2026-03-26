@@ -1,4 +1,5 @@
 using BepInEx.Configuration;
+using MBakuon;
 using UnityEngine;
 
 namespace BakuonConfigMod
@@ -7,6 +8,8 @@ namespace BakuonConfigMod
     {
         private ConfigEntry<bool> showFPS;
         private ConfigEntry<bool> muteOnFocusLoss;
+        private ConfigEntry<bool> hideMyAccessories;
+        private ConfigEntry<bool> showChatLabelWhenUIHidden;
 
         // FPS文字列キャッシュ。毎フレームのstring生成を避けるため30フレームごとに更新。
         private string fpsText = "FPS: --";
@@ -14,8 +17,10 @@ namespace BakuonConfigMod
 
         public void Initialize(ConfigFile config)
         {
-            showFPS = config.Bind("Settings", "ShowFPS", false, "FPS表示");
-            muteOnFocusLoss = config.Bind("Settings", "MuteOnFocusLoss", false, "非アクティブ時にミュート");
+            showFPS                  = config.Bind("Settings", "ShowFPS",                  false, "FPS表示");
+            muteOnFocusLoss          = config.Bind("Settings", "MuteOnFocusLoss",          false, "非アクティブ時にミュート");
+            hideMyAccessories        = config.Bind("Settings", "HideMyAccessories",        false, "自分のアクセサリーを非表示");
+            showChatLabelWhenUIHidden = config.Bind("Settings", "ShowChatLabelWhenUIHidden", false, "UI非表示時もショートカットメッセージを表示");
         }
 
         private void OnApplicationFocus(bool hasFocus)
@@ -63,6 +68,49 @@ namespace BakuonConfigMod
                 // 設定を OFF にした場合は即座にミュート解除
                 if (!newMute)
                     AudioListener.pause = false;
+            }
+
+            bool newHide = GUILayout.Toggle(hideMyAccessories.Value, "  自分のアクセサリーを非表示");
+            if (newHide != hideMyAccessories.Value)
+            {
+                hideMyAccessories.Value = newHide;
+                ApplyMyAccessoryVisibility(newHide);
+            }
+
+            bool newChatLabel = GUILayout.Toggle(showChatLabelWhenUIHidden.Value, "  UI非表示時もショートカットメッセージを表示");
+            if (newChatLabel != showChatLabelWhenUIHidden.Value)
+            {
+                showChatLabelWhenUIHidden.Value = newChatLabel;
+                IsShowChatLabelWhenUIHidden = newChatLabel;
+            }
+        }
+
+        // ─── アクセサリー表示制御 ─────────────────────────────────────────
+
+        // パッチからも呼べるよう static で公開
+        public static bool IsHideMyAccessories { get; private set; }
+        public static bool IsShowChatLabelWhenUIHidden { get; private set; }
+
+        // Initialize 後に static フィールドを同期するため Start で呼ぶ
+        private void Start()
+        {
+            IsHideMyAccessories        = hideMyAccessories.Value;
+            IsShowChatLabelWhenUIHidden = showChatLabelWhenUIHidden.Value;
+        }
+
+        public static void ApplyMyAccessoryVisibility(bool hide)
+        {
+            IsHideMyAccessories = hide;
+
+            var gm = SingletonMonoBehaviour<GameManager>.Instance;
+            if (gm == null || gm.myPlayerObject == null) return;
+
+            var ctrl = gm.myPlayerObject.GetComponent<FieldCharacterAccessoryController>();
+            if (ctrl == null) return;
+
+            foreach (var acc in ctrl.settedAccessories)
+            {
+                if (acc != null) acc.SetActive(!hide);
             }
         }
     }
