@@ -36,6 +36,7 @@ namespace BakuonConfigMod
             go.AddComponent<RingWindow>();
             go.AddComponent<ItemWindow>();
             go.AddComponent<AccessoryWindow>();
+            go.AddComponent<RankWindow>();
             var window = go.AddComponent<ConfigModWindow>();
             window.Initialize(Config);
 

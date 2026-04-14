@@ -13,6 +13,7 @@ namespace BakuonConfigMod
         private RingWindow ringWindow;
         private ItemWindow itemWindow;
         private AccessoryWindow accessoryWindow;
+        private RankWindow rankWindow;
 
         private bool isVisible = false;
         private string rebindingAction = null;  // null = リバインド待ちなし
@@ -21,15 +22,14 @@ namespace BakuonConfigMod
         private Rect windowRect = new Rect(100, 100, 500, 320);
         private Vector2 scrollPos = Vector2.zero;
 
-        // タブ: 0=キーコンフィグ, 1=設定, 2=UI表示設定, 3=リング, 4=アイテム, 5=アクセサリ
+        // タブ: 0=キーコンフィグ, 1=設定, 2=UI表示設定, 3=リング, 4=アイテム, 5=アクセサリ, 6=ランク
         private int activeTab = 0;
-        private static readonly string[] TabLabels = { "キーコンフィグ", "設定", "UI表示設定", "リング", "アイテム", "アクセサリ" };
+        private static readonly string[] TabLabels = { "キーコンフィグ", "設定", "UI表示設定", "リング", "アイテム", "アクセサリ", "ランク" };
 
         // タブごとのウィンドウ高さ (1080p 基準)
-        // index: 0=キーコンフィグ, 1=設定, 2=UI表示設定, 3=リング, 4=アイテム, 5=アクセサリ
-        private static readonly float[] TabWindowHeights = { 320f, 260f, 260f, 210f, 370f, 600f };
+        private static readonly float[] TabWindowHeights = { 320f, 260f, 260f, 210f, 370f, 600f, 500f };
         // スクロール領域が必要なタブ用の高さ (ウィンドウ高さ - 固定オーバーヘッド分)
-        private static readonly int[] TabScrollHeights  = {  180,    0,    0,    0,  220,  440 };
+        private static readonly int[] TabScrollHeights  = {  180,    0,    0,    0,  220,  440,  340 };
 
         private void Start()
         {
@@ -38,6 +38,7 @@ namespace BakuonConfigMod
             ringWindow       = GetComponent<RingWindow>();
             itemWindow       = GetComponent<ItemWindow>();
             accessoryWindow  = GetComponent<AccessoryWindow>();
+            rankWindow       = GetComponent<RankWindow>();
         }
 
         public void Initialize(ConfigFile config)
@@ -89,9 +90,15 @@ namespace BakuonConfigMod
             GUI.matrix = Matrix4x4.TRS(
                 Vector3.zero, Quaternion.identity, new Vector3(scale, scale, 1f));
 
+            // 背景の不透明度を上げて視認性を改善
+            var prevBg = GUI.backgroundColor;
+            GUI.backgroundColor = new Color(0.15f, 0.15f, 0.15f, 0.92f);
+
             windowRect = GUILayout.Window(
                 98765, windowRect, DrawWindow,
                 "[" + ToggleKey.Value + " で開閉]");
+
+            GUI.backgroundColor = prevBg;
         }
 
         private void DrawWindow(int id)
@@ -124,6 +131,9 @@ namespace BakuonConfigMod
                     break;
                 case 5:
                     if (accessoryWindow != null) accessoryWindow.DrawTabContent(TabScrollHeights[5]);
+                    break;
+                case 6:
+                    if (rankWindow != null) rankWindow.DrawTabContent(TabScrollHeights[6]);
                     break;
             }
 
